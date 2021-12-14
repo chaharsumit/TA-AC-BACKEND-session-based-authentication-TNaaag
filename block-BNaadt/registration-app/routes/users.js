@@ -48,7 +48,15 @@ router.get('/register', (req, res, next) => {
 router.post('/register', (req, res, next) => {
   User.create(req.body, (err, user) => {
     if(err){
-      return next(err);
+      if(err.code === 11000){
+        req.flash('error', 'the email is not unique');
+        return res.redirect('/users/register');
+      }
+      if(err.name === 'ValidationError'){
+        req.flash('error', 'the password should have more than 4 characters');
+        return res.redirect('/users/register');
+      }
+      return res.json({ err });
     }
     res.redirect('/');
   })
