@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+  <a href="/users/logout">Logout</a>
+  <h1>Article title: <%= article.title %></h1>
+  <h3>Article Author: <%= article.author %></h3>
+  <p>likes : <%= article.likes %></p>
+  <a href="/articles/<%= article.slug %>/like">like</a>
+  <a href="/articles/<%= article.slug %>/dislike">dislike</a>
+  <a href="/articles/<%= article.slug %>/edit">edit article</a>
+  <h2>add Comments</h2>
+  <form action="/articles/<%= article.slug %>/comment" method="POST">
+    <input type="text" name="name" placeholder="enter name of author">
+    <textarea name="comment" cols="30" rows="10" placeholder="enter comment"></textarea>
+    <input type="submit" value="add comment">
+  </form>
+
+  <h2>comments</h2>
+  <hr>
+  <% article.comments.forEach(comment => { %>
+    <div>
+      <p><%= comment.comment %></p>
+      <p><%= comment.name %></p>
+      <p><%= comment.likes %></p>
+      <a href="/comments/<%= comment.id %>/like">like</a>
+      <a href="/comments/<%= comment.id %>/dislike">dislike</a>
+      <a href="/comments/<%= comment.id %>/edit">edit comment</a>
+      <a href="/comments/<%= comment.id %>/delete">delete comment</a>
+    </div>
+    <hr>
+  <% }) %>
+</body>
+</html>
