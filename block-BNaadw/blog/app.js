@@ -6,14 +6,15 @@ var logger = require('morgan');
 var session = require('express-session');
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo');
-var flash = require('flash');
+var flash = require('connect-flash');
 
 require('dotenv').config();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var articleRouter = require('./routes/articles');
 
-mongoose.connect('mongodb://localhost/newlogindata', (err) => {
+mongoose.connect('mongodb://localhost/newBlog', (err) => {
   console.log(err ? err : "Database is connected successfully");
 })
 
@@ -33,13 +34,14 @@ app.use(session({
   secret: process.env.SECRET,
   resave: true,
   saveUninitialized: true,
-  store: new MongoStore({ mongoUrl: "mongodb://localhost/newlogindata" })
+  store: new MongoStore({ mongoUrl: "mongodb://localhost/newBlog" })
 }));
 
 app.use(flash());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/articles', articleRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
