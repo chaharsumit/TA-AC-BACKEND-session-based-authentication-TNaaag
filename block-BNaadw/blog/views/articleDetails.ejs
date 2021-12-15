@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>Article title: <%= article.title %></h1>
+  <h3>Article Author: <%= article.author %></h3>
+  <p>likes : <%= article.likes %></p>
+  <a href="/articles/<%= article.slug %>/like">like</a>
+  <a href="/articles/<%= article.slug %>/dislike">dislike</a>
+
+  <h2>Comments</h2>
+  <form action="/articles/comments" method="POST">
+    <input type="text" name="name" placeholder="enter name of author">
+    <textarea name="comment" cols="30" rows="10" placeholder="enter comment"></textarea>
+    <input type="submit" value="add comment">
+  </form>
+</body>
+</html>

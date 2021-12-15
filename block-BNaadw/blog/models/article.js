@@ -1,5 +1,6 @@
 let mongoose = require('mongoose');
 let bcrypt = require('bcrypt');
+let Comment = require('./comment');
 let Schema = mongoose.Schema;
 
 let articleSchema = new Schema({
@@ -10,6 +11,12 @@ let articleSchema = new Schema({
   author: String,
   slug: String
 }, { timestamps: true });
+
+articleSchema.pre("save", function(next){
+  this.slug = this.title;
+  this.slug = this.slug.toLowerCase().split(' ').join("-");
+  next();
+})
 
 let Article = mongoose.model('Article', articleSchema);
 
