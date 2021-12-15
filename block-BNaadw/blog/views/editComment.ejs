@@ -8,14 +8,13 @@
   <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 <body>
-  <h1>welcome to articles page</h1>
-  <a href="/">go back home</a>
-  <a href="/users/logout">Logout</a>
-  <a href="/articles/new">create article</a>
-  <% articles.forEach(article => { %>
-    <div>
-    <a href="/articles/<%= article.slug %>"><%= article.title %></a>
-    </div>
-  <% }) %>
+  <h1>edit comment</h1>
+  <form action="/comments/<%= comment.id %>" method="POST">
+    <input type="text" name="name" value="<%= comment.name %>">
+    <textarea name="comment">
+      <%= comment.comment %>
+    </textarea>
+    <input type="submit" value="edit comment">
+  </form>
 </body>
 </html>
