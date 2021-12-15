@@ -9,7 +9,7 @@ let articleSchema = new Schema({
   likes: { type: Number, default: 0 },
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
   author: String,
-  slug: String
+  slug: { type: String, unique: true }
 }, { timestamps: true });
 
 articleSchema.pre("save", function(next){
