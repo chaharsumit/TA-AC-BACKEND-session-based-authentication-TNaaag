@@ -3,6 +3,7 @@ let Admin = require('../models/admin');
 let User = require('../models/user');
 let Product = require('../models/product');
 let Comment = require('../models/comment');
+let Cart = require('../models/cart');
 
 let router = express.Router();
 
@@ -17,6 +18,15 @@ router.get('/', (req, res, next) => {
 
 router.get('/new', (req, res, next) => {
   res.render('createProduct');
+})
+
+router.get('/cart', (req, res, next) => {
+  Cart.findOne({}).populate("productIds").exec((err, cart) => {
+    if(err){
+      return next(err);
+    }
+    res.render('cart', { productsList: cart.productIds });
+  })
 })
 
 router.get('/:id', (req, res, next) => {
@@ -78,6 +88,18 @@ router.get('/comment/:id/delete', (req, res, next) => {
     })
   })
 })
+
+router.get('/:id/cart/add', (req, res, next) => {
+  let id = req.params.id;
+  req.body.productIds = id;
+  Cart.create(req.body, (err, cart) => {
+    if(err){
+      return next(err);
+    }
+    res.redirect('/products/' + id);
+  });
+})
+
 
 //like
 router.get('/:id/like', (req, res, next) => {

@@ -23,8 +23,9 @@
   <a href="/products/<%= product.id %>/increaseQuantity">increase quantity</a>
   <a href="/products/<%= product.id %>/decreaseQuantity">decrease quantity</a>
   <hr>
-  <a href="/products/<%= product.id %>/cart">add to cart</a>
-
+  <a href="/products/<%= product.id %>/cart/add">add to cart</a>
+  <a href="/products/cart">go to cart</a>
+  <hr>
   <div>
     <h2>Add Comments</h2>
     <form action="/products/comment/<%= product.id %>" method="POST">
