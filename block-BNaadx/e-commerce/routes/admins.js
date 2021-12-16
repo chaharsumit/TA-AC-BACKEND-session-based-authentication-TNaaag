@@ -14,12 +14,16 @@ router.get('/login', (req, res, next) => {
 })
 
 router.get('/dashboard', (req, res, next) => {
-  Product.find({}, (err, products) => {
-    if(err){
-      return next(err);
-    }
-    res.render('dashboard', { products: products });
-  })
+  if(req.session && req.session.adminId){
+    Product.find({}, (err, products) => {
+      if(err){
+        return next(err);
+      }
+      res.render('dashboard', { products: products });
+    })
+  }else{
+    res.redirect('/admin/login');
+  }
 })
 
 router.post('/register', (req, res, next) => {

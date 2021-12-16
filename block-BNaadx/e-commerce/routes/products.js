@@ -17,7 +17,11 @@ router.get('/', (req, res, next) => {
 })
 
 router.get('/new', (req, res, next) => {
-  res.render('createProduct');
+  if(req.session && req.session.adminId){
+    return res.render('createProduct');
+  }else{
+    res.redirect('/admin/login');
+  }
 })
 
 router.get('/cart', (req, res, next) => {
@@ -40,133 +44,177 @@ router.get('/:id', (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
-  Product.create(req.body, (err, product) => {
-    if(err){
-      return next(err);
-    }
-    res.redirect('/products');
-  })
+  if(req.session && req.session.adminId){
+    Product.create(req.body, (err, product) => {
+      if(err){
+        return next(err);
+      }
+      return res.redirect('/products');
+    })
+  }else{
+    res.redirect('/admin/login');
+  }
 })
 
 router.post('/comment/:id', (req, res, next) => {
-  let id = req.params.id;
-  req.body.productId = id;
-  Comment.create(req.body, (err, comment) => {
-    if(err){
-      return next(err);
-    }
-    Product.findByIdAndUpdate(id, {$push: {comments: comment.id}}, (err, product) => {
+  if(req.session && req.session.userId){
+    let id = req.params.id;
+    req.body.productId = id;
+    Comment.create(req.body, (err, comment) => {
       if(err){
         return next(err);
       }
-      res.redirect('/products/' + id);
+      Product.findByIdAndUpdate(id, {$push: {comments: comment.id}}, (err, product) => {
+        if(err){
+          return next(err);
+        }
+        return res.redirect('/products/' + id);
+      })
     })
-  })
+  }else{
+    res.redirect('/users/login');
+  } 
 })
 
 router.get('/comment/:id/edit', (req, res, next) => {
-  let id = req.params.id;
-  Comment.findById(id, (err, comment) => {
-    if(err){
-      return next(err);
-    }
-    res.render('editComment', { comment });
-  })
-})
-
-router.get('/comment/:id/delete', (req, res, next) => {
-  let id = req.params.id;
-  Comment.findByIdAndDelete(id, (err, deletedComment) => {
-    if(err){
-      return next(err);
-    }
-    Product.findByIdAndUpdate(deletedComment.productId, {$pull: {comments: id}}, (err, product) => {
+  if(req.session && req.session.userId){
+    let id = req.params.id;
+    Comment.findById(id, (err, comment) => {
       if(err){
         return next(err);
       }
-      res.redirect('/products/' + deletedComment.productId);
+      return res.render('editComment', { comment });
     })
-  })
+  }else{
+    res.redirect('/users/login');
+  }
+})
+
+router.get('/comment/:id/delete', (req, res, next) => {
+  if(req.session && req.session.userId){
+    let id = req.params.id;
+    Comment.findByIdAndDelete(id, (err, deletedComment) => {
+      if(err){
+        return next(err);
+      }
+      Product.findByIdAndUpdate(deletedComment.productId, {$pull: {comments: id}}, (err, product) => {
+        if(err){
+          return next(err);
+        }
+        return res.redirect('/products/' + deletedComment.productId);
+      })
+    })
+  }else{
+    res.redirect('/users/login');
+  }
 })
 
 router.get('/:id/cart/add', (req, res, next) => {
-  let id = req.params.id;
-  req.body.productIds = id;
-  Cart.create(req.body, (err, cart) => {
-    if(err){
-      return next(err);
-    }
-    res.redirect('/products/' + id);
-  });
+  if(req.session && req.session.userId){
+    let id = req.params.id;
+    req.body.productIds = id;
+    Cart.create(req.body, (err, cart) => {
+      if(err){
+        return next(err);
+      }
+      return res.redirect('/products/' + id);
+    });
+  }else{
+    res.redirect('/admin/login');
+  }
 })
 
 //edit product
 
 router.get('/:id/edit', (req, res, next) => {
-  let id = req.params.id;
-  Product.findById(id, (err, product) => {
-    if(err){
-      return next(err);
-    }
-    res.render('editProduct', { product: product });
-  })
-})
-
-router.post('/:id/edit', (req, res, next) => {
-  let id = req.params.id;
-  Product.findByIdAndUpdate(id, req.body, (err, product) => {
-    if(err){
-      return next(err);
-    }
-    res.redirect('/admin/dashboard');
-  });
-})
-
-router.get('/:id/delete', (req, res, next) => {
-  let id = req.params.id;
-  Product.findByIdAndDelete(id, (err, deletedProduct) => {
-    if(err){
-      return next(err);
-    }
-    Comment.deleteMany({$exists: {productId: deletedProduct.id}}, (err, deletedComments) => {
+  if(req.session && req.session.adminId){
+    let id = req.params.id;
+    Product.findById(id, (err, product) => {
       if(err){
         return next(err);
       }
-      res.redirect('/admin/dashboard');
+      return res.render('editProduct', { product: product });
     })
-  })
+  }else{
+    res.redirect('/admin/login');
+  }
+})
+
+router.post('/:id/edit', (req, res, next) => {
+  if(req.session && req.session.adminId){
+    let id = req.params.id;
+    Product.findByIdAndUpdate(id, req.body, (err, product) => {
+      if(err){
+        return next(err);
+      }
+      return res.redirect('/admin/dashboard');
+    });
+  }else{
+    res.redirect('/admin/login');
+  }
+})
+
+router.get('/:id/delete', (req, res, next) => {
+  if(req.session && req.session.adminId){
+    let id = req.params.id;
+    Product.findByIdAndDelete(id, (err, deletedProduct) => {
+      if(err){
+        return next(err);
+      }
+      Comment.deleteMany({$exists: {productId: deletedProduct.id}}, (err, deletedComments) => {
+        if(err){
+          return next(err);
+        }
+        return res.redirect('/admin/dashboard');
+      })
+    })
+  }else{
+    res.redirect('/admin/login');
+  }
 })
 
 //like
 router.get('/:id/like', (req, res, next) => {
-  let id = req.params.id;
-  Product.findByIdAndUpdate(id, {$inc: {likes: 1}}, (err, product) => {
-    if(err){
-      return next(err);
-    }
-    res.redirect('/products/' + id);
-  });
+  if(req.session && req.session.userId){
+    let id = req.params.id;
+    Product.findByIdAndUpdate(id, {$inc: {likes: 1}}, (err, product) => {
+      if(err){
+        return next(err);
+      }
+      return res.redirect('/products/' + id);
+    });
+  }else{
+    res.redirect('/users/login');
+  }
 })
 
 //quantity
 router.get('/:id/increaseQuantity', (req, res, next) => {
-  let id = req.params.id;
-  Product.findByIdAndUpdate(id, {$inc: {quantity: 1}}, (err, product) => {
-    if(err){
-      return next(err);
-    }
-    res.redirect('/products/' + id);
-  })
+  if(req.session && req.session.userId){
+    let id = req.params.id;
+    Product.findByIdAndUpdate(id, {$inc: {quantity: 1}}, (err, product) => {
+      if(err){
+        return next(err);
+      }
+      return res.redirect('/products/' + id);
+    })
+  }else{
+    res.redirect('/users/login');
+  }
 })
 
 router.get('/:id/decreaseQuantity', (req, res, next) => {
-  let id = req.params.id;
-  Product.findByIdAndUpdate(id, {$inc: {quantity: -1}}, (err, product) => {
-    if(err){
-      return next(err);
-    }
-    res.redirect('/products/' + id);
-  })
+  if(req.session && req.session.userId){
+    let id = req.params.id;
+    Product.findByIdAndUpdate(id, {$inc: {quantity: -1}}, (err, product) => {
+      if(err){
+        return next(err);
+      }
+      res.redirect('/products/' + id);
+    })
+  }else{
+    res.redirect('/users/login');
+  }
 })
 
 
