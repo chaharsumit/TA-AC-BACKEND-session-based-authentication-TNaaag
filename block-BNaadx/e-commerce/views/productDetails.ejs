@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+  <a href="/">go back home</a>
+  <a href="/users/login">login as user</a>
+  <a href="/admin/login">login as admin</a>
+  <h1>welcome to products details page</h1>
+  <hr>
+  <h2>Product : <%= product.name %></h2>
+  <h3>Price : $<%= product.price %></h3>
+  <hr>
+  <h3>likes : <%= product.likes %></h3>
+  <a href="/products/<%= product.id %>/like">like product</a>
+  <hr>
+  <h3>Quantity: <%= product.quantity %></h3>
+  <a href="/products/<%= product.id %>/increaseQuantity">increase quantity</a>
+  <a href="/products/<%= product.id %>/decreaseQuantity">decrease quantity</a>
+  <hr>
+  <a href="/products/<%= product.id %>/cart">add to cart</a>
+
+  <div>
+    <h2>Add Comments</h2>
+    <form action="/products/comment/<%= product.id %>" method="POST">
+      <textarea name="comment" cols="30" rows="10" placeholder="Type your Comment..."></textarea>
+      <input type="submit" value="add comment">
+    </form>
+  </div>
+
+  <% product.comments.forEach(comment => { %>
+    <hr>
+    <div>
+      <p><%= comment.comment %></p>
+      <a href="/products/comment/<%= comment.id %>edit">edit comment</a>
+      <a href="/products/comment/<%= comment.id %>/delete">delete comment</a>
+    </div>
+  <%}) %>
+</body>
+</html>

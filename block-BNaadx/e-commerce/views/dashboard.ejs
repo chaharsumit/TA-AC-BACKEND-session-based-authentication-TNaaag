@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>welcome to dashboard</h1>
+  <a href="/admin/logout">Logout as admin</a>
+  <hr>
+  <a href="/products/new">create a product</a>
+  <% products.forEach(product => { %>
+    <hr>
+    <div>
+      <h2>Product: <%= product.name %></h2>
+      <a href="/product/<%= product.id %>">show more</a>
+      <a href="/product/<%= product.id %>/edit">edit</a>
+      <a href="/product/<%= product.id %>/delete">delete</a>
+    </div>
+  <% }) %>
+</body>
+</html>
