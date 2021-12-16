@@ -100,6 +100,42 @@ router.get('/:id/cart/add', (req, res, next) => {
   });
 })
 
+//edit product
+
+router.get('/:id/edit', (req, res, next) => {
+  let id = req.params.id;
+  Product.findById(id, (err, product) => {
+    if(err){
+      return next(err);
+    }
+    res.render('editProduct', { product: product });
+  })
+})
+
+router.post('/:id/edit', (req, res, next) => {
+  let id = req.params.id;
+  Product.findByIdAndUpdate(id, req.body, (err, product) => {
+    if(err){
+      return next(err);
+    }
+    res.redirect('/admin/dashboard');
+  });
+})
+
+router.get('/:id/delete', (req, res, next) => {
+  let id = req.params.id;
+  Product.findByIdAndDelete(id, (err, deletedProduct) => {
+    if(err){
+      return next(err);
+    }
+    Comment.deleteMany({$exists: {productId: deletedProduct.id}}, (err, deletedComments) => {
+      if(err){
+        return next(err);
+      }
+      res.redirect('/admin/dashboard');
+    })
+  })
+})
 
 //like
 router.get('/:id/like', (req, res, next) => {

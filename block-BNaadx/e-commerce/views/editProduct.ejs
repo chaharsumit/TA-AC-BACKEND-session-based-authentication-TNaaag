@@ -7,6 +7,11 @@
   <title>Document</title>
 </head>
 <body>
-  <h1>edit product</h1>
+  <h1>create Product</h1>
+  <form action="/products/<%= product.id %>/edit" method="POST">
+    <input type="text" name="name" value="<%= product.name %>">
+    <input type="number" name="price" value="<%= product.price %>">
+    <input type="submit" value="edit product">
+  </form>
 </body>
 </html>
